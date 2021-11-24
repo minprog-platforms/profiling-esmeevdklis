@@ -38,12 +38,12 @@ class Sudoku:
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = -1
-
-        for i in range(9):
-            for j in range(9):
-                if i == x and j == y:
-                    row = self._grid[y]
-                    value = int(row[x])
+        # Improvement 1
+        # for i in range(9):
+        #     for j in range(9):
+        #         if i == x and j == y:
+        row = self._grid[y]
+        value = int(row[x])
 
         return value
 
@@ -87,10 +87,11 @@ class Sudoku:
 
     def row_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th row."""
-        values = []
-
-        for j in range(9):
-            values.append(self.value_at(j, i))
+        # Improvement 2
+        values = list(map(int, self._grid[i]))
+        # values = []
+        # for j in range(9):
+        #     values.append(self.value_at(j, i))
 
         return values
 
@@ -116,9 +117,13 @@ class Sudoku:
         x_start = (i % 3) * 3
         y_start = (i // 3) * 3
 
-        for x in range(x_start, x_start + 3):
-            for y in range(y_start, y_start + 3):
-                values.append(self.value_at(x, y))
+        # Improvement 3
+        # for x in range(x_start, x_start + 3):
+        #     for y in range(y_start, y_start + 3):
+        #         values.append(self.value_at(x, y))
+
+        for y in range(y_start, y_start + 3):
+            values += (list(map(int, self._grid[y][x_start:x_start + 3])))
 
         return values
 
