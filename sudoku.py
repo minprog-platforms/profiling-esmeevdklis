@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Iterable, Sequence
+from typing import Iterable
 
 
 class Sudoku:
@@ -38,10 +38,6 @@ class Sudoku:
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = -1
-        # Improvement 1
-        # for i in range(9):
-        #     for j in range(9):
-        #         if i == x and j == y:
         row = self._grid[y]
         value = int(row[x])
 
@@ -82,16 +78,13 @@ class Sudoku:
             for x in range(9):
                 if self.value_at(x, y) == 0 and next_x == -1 and next_y == -1:
                     next_x, next_y = x, y
+                    return next_x, next_y
 
         return next_x, next_y
 
     def row_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th row."""
-        # Improvement 2
         values = list(map(int, self._grid[i]))
-        # values = []
-        # for j in range(9):
-        #     values.append(self.value_at(j, i))
 
         return values
 
@@ -117,11 +110,6 @@ class Sudoku:
         x_start = (i % 3) * 3
         y_start = (i // 3) * 3
 
-        # Improvement 3
-        # for x in range(x_start, x_start + 3):
-        #     for y in range(y_start, y_start + 3):
-        #         values.append(self.value_at(x, y))
-
         for y in range(y_start, y_start + 3):
             values += (list(map(int, self._grid[y][x_start:x_start + 3])))
 
@@ -132,20 +120,20 @@ class Sudoku:
         Returns True if and only if all rows, columns and blocks contain
         only the numbers 1 through 9. False otherwise.
         """
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        values = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
         result = True
 
         for i in range(9):
-            for value in values:
-                if value not in self.column_values(i):
-                    result = False
-
-                if value not in self.row_values(i):
-                    result = False
-
-                if value not in self.block_values(i):
-                    result = False
+            if not values.issubset(set(self.column_values(i))):
+                result = False
+                break
+            if not values.issubset(set(self.row_values(i))):
+                result = False
+                break
+            if not values.issubset(set(self.block_values(i))):
+                result = False
+                break
 
         return result
 
